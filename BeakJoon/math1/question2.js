@@ -7,19 +7,13 @@ const rl = readline.createInterface({
 rl.on('line', (line) =>{
     line = parseInt(line);
     let cnt = 1;
+    let next_rooms = 2;
     let rooms = 6;
-    let rooms_cnt = 0;
-
-    for(let i = 2; i <= line; i++){
-        if(rooms_cnt <= rooms){
-            rooms_cnt++;
-            console.log(i);
-        }
-        if(rooms_cnt === rooms){
+    for(let i = 1 ; i <= line; i++){
+        if(i === next_rooms){
             cnt++;
+            next_rooms += rooms;
             rooms += 6;
-            rooms_cnt = 0;
-            console.log();
         }
     }
     console.log(cnt);
