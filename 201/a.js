@@ -1,33 +1,25 @@
-function solution([n, line]){
-    let T = Number(n);
-    let array = line.split(' ').map(num => Number(num));
-    let result = new Array(T).fill(-1);
-    let stack =[];
-    let obj = array.reduce((acc, e) => {
-        if(e in acc) acc[e] += 1; 
-        else acc[e] = 1;
-        return acc;
-    },{});
-    array.map((e, index, arr)=>{
-        while(stack.length !== 0 && obj[arr[stack[stack.length-1]]] < obj[e]){
-            result[stack.pop()] = e;
+function isPrime(arr){
+    // 0과 1은 소수가 아니다 그러므로 false을 제할당
+    arr[0] = false;
+    arr[1] = false;
+    // 정수 2부터 20까지의 숫자중 소수를 찾아내보자
+    for(let i = 2; i < arr.length; i++){
+        for(let j = 2; j <= Math.sqrt(i); j++){
+            if(i%j === 0){
+                arr[i] = false;
+                break;
+            }
         }
-        stack.push(index);
-    });
-    return result.join(' ');
+    }
+    return arr;
 }
 
-const readline = require('readline');
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
 
-let input = [];
-
-rl.on('line', function(line){
-    input.push(line);
-}).on('close', function(){
-    console.log(solution(input));
-    process.exit();
-});
+// 길이 21인 배열 0~20까지의 index넘버를 가지는 배열을 생성후 false값을 할당
+const array = new Array(21).fill(true);
+let result = isPrime(array);
+for(let i = 0; i < result.length; i++){
+    if(result[i]){
+        console.log(i); // 0~20 사이의 소수: 2,3,5,7,11,13,17,19(8개)
+    }
+}
