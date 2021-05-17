@@ -28,17 +28,21 @@ rl.on('line', (line)=>{
     function dfs(cnt){
         if(cnt === n){
             let tmp = 0;
-            // 먼저 마지막 도시에서 출발 도시로 돌아가는 비용을 더해준다.
-            // output 배열의 가장 마지막 도시에서 => 가장 첫번째 도시로
-            if(arr[output[output.length-1]][output[0]] !== 0){
-                tmp += arr[output[output.length-1]][output[0]];
-            }
             
             // 도시들의 이동 비용을 순서대로 더해준다.
             for(let i = 1; i < output.length; i++){
                 // 이전 도시에서 현재 도시로 오는데 든 비용을 더해준다.
                 tmp += arr[output[i-1]][output[i]]; 
             }
+            
+            // 마지막 도시에서 출발 도시로 돌아가는 비용을 더해준다.
+            // output 배열의 가장 마지막 도시에서 => 가장 첫번째 도시로
+            if(arr[output[output.length-1]][output[0]] !== 0){
+                tmp += arr[output[output.length-1]][output[0]];
+            } else {
+                tmp = Infinity;
+            }
+
             // 이전의 비용가 비교한다.
             result = Math.min(result, tmp);
             return;
