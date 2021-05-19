@@ -20,6 +20,8 @@ rl.on('line', (line)=>{
     let min = Infinity;
 
     dfs(0);
+
+    // 주의 정수는 하나의 문자열이 되어야한다.
     console.log(result[result.length-1] +'\n'+ result[0]);
 
 
@@ -55,6 +57,7 @@ rl.on('line', (line)=>{
                 flag = check(visit[j], visit[j+1], arr[i]);
                 break;
             }
+            // 앞의 부등호가 false라면 뒤를 볼필요가 없다.
             if(!flag) break;
         }
         
