@@ -1,57 +1,64 @@
-const readline = require("readline");
-
+const readline = require('readline');
 const rl = readline.createInterface({
     input: process.stdin,
-    output: process.stdout,
+    output: process.stdout
 });
 
-let input = [];
-let N = 0;
-let M = 0;
-rl.on("line", (line) => {
-    if (!N) {
-        [N, M] = line.split(" ").map(Number);
-    } else {
-        input.push(line);
-        if (input.length === N) {
-            main();
-            process.exit();
-        }
-    }
-});
+const input = [];
+const dnlist = [1, -1, 0, 0];
+const dmlist = [0, 0, 1, -1];
 
-const main = () => {
-    const graph = [];
-    const visited = [];
+rl.on('line', (line)=>{
+    input.push(line.trim());
+}).on('close', ()=>{
+    const[M, N] = input.shift().split(num => Number(num));
+    // 전체 토마토의 개수 익은것 익지 않은 것 포함
+    let total_tomato = M * N;
+    // 익은 토마토의 수
+    let tomato = 0;
 
-    for (let i = 0; i < N; i++) {
-        graph[i] = input[i].split("").map(Number);
-        visited[i] = new Array(M).fill(0);
-    }
+    const prevRipeList = [];
 
-    const bfs = (yPos, xPos) => {
-        const xMove = [0, 0, -1, 1];
-        const yMove = [1, -1, 0, 0];
-        const queue = [];
-        queue.push({ yPos: yPos, xPos: xPos });
-        visited[yPos][xPos] = 1;
-
-        while (queue.length) {
-            const { yPos, xPos } = queue.shift();
-            for (let i = 0; i < 4; i++) {
-                const nextY = yPos + yMove[i];
-                const nextX = xPos + xMove[i];
-                if (nextY >= 0 && nextY < N && nextX >= 0 && nextX < M) {
-                    if (!visited[nextY][nextX] && graph[nextY][nextX]) {
-                        visited[nextY][nextX] = visited[yPos][xPos] + 1;
-                        queue.push({ yPos: nextY, xPos: nextX });
-                    }
-                }
+    const box = input.map((str, n) => 
+        str.split(' ').map((state, m) =>{
+            const num = Number(state);
+            if(num === -1){
+                total_tomato--;
+            } else if (num === 1){
+                prevRipeList.push(`${n} ${m}`);
+                tomato++;
             }
-        }
-    };
+            return num;
+        })
+    );
 
-    bfs(0, 0);
-    console.log(graph);
-    console.log(visited[N - 1][M - 1]);
-};
+    let t = 0;
+    const newRipeSet = new Set();
+    while(true){
+        prevRipeList.forEach((pos) => {
+            const[m , n] = pos.split(' ').map(num => Number);
+            dmlist.forEach((dm, i)=> {
+                const dn = dnlist[i],
+                nextM = m + dm,
+                nextN = n + dn;
+
+                if(nextM < 0 || nextM >= M || nextN < 0 || nextN >= N || box[nextM][nextN] !== 0){
+                    return;
+                }
+                box[nextM][nextN] = 1;
+                newRipeSet.add(`${nextM} ${nextN}`);
+            });
+        });
+        if(newRipeSet.size === 0){
+            break;
+        }
+        t++;
+        tomato += newRipeSet.size;
+        prevRipeList = Array.from(newRipeSet);
+        newRipeSet.clear();
+    }
+
+    console.log(total_tomato === tomato ? t : -1);
+
+    process.exit();
+});
